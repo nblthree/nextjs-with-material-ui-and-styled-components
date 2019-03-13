@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-with-material-ui+styled-components",
+  "name": "nextjs-with-material-ui-styled-components",
   "version": "1.0.0",
   "dependencies": {
     "@material-ui/core": "latest",
