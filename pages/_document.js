@@ -1,49 +1,28 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Document, { Head, Main, NextScript } from 'next/document';
 import flush from 'styled-jsx/server';
 import { ServerStyleSheet } from 'styled-components'
+import { ServerStyleSheets } from '@material-ui/styles';
+import theme from '../src/theme';
 
 class MyDocument extends Document {
   static async getInitialProps (ctx) {
-    let pageContext;
-    const page = ctx.renderPage(Component => {
-      const WrappedComponent = props => {
-        pageContext = props.pageContext;
-        return <Component {...props} />;
-      };
-
-      WrappedComponent.propTypes = {
-        pageContext: PropTypes.object.isRequired,
-      };
-
-      return WrappedComponent;
-    });
-
-    let css;
-    if (pageContext) {
-      css = pageContext.sheetsRegistry.toString();
-    }
     const sheet = new ServerStyleSheet()
-    const originalRenderPage = ctx.renderPage
+    const sheets = new ServerStyleSheets()
+    const originalRenderPage = ctx.renderPage;
+
     try {
         ctx.renderPage = () => originalRenderPage({
-            enhanceApp: App => props => sheet.collectStyles(<App {...props} />)
+            enhanceApp: App => props => ({...sheet.collectStyles(<App {...props} />), ...sheets.collect(<App {...props} />)})
           })
-
         const initialProps = await Document.getInitialProps(ctx)
         return {
           ...initialProps,
-          ...page,
-          pageContext,
           styles: (
             <React.Fragment>
-              <style
-                id="jss-server-side"
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: css }}
-              />
-              {initialProps.styles}{sheet.getStyleElement()}{flush() || null}
+              {sheets.getStyleElement()}
+              {sheet.getStyleElement()}
+              {flush() || null}
             </React.Fragment>
           )
         }
@@ -53,8 +32,6 @@ class MyDocument extends Document {
   }
 
   render() {
-    const { pageContext } = this.props;
-
     return (
       <html lang="en" dir="ltr">
         <Head>
@@ -67,11 +44,11 @@ class MyDocument extends Document {
           {/* PWA primary color */}
           <meta
             name="theme-color"
-            content={pageContext ? pageContext.theme.palette.primary.main : null}
+            content={theme.palette.primary.main}
           />
           <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
           />
         </Head>
         <body>
