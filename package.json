@@ -7,7 +7,7 @@
     "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "styled-components": "latest"
+    "styled-components": "^5.0.0-beta.8"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "latest"

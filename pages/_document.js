@@ -1,33 +1,37 @@
 import React from 'react';
 import Document, { Head, Main, NextScript } from 'next/document';
-import flush from 'styled-jsx/server';
 import { ServerStyleSheet } from 'styled-components'
 import { ServerStyleSheets } from '@material-ui/styles';
 import theme from '../src/theme';
 
 class MyDocument extends Document {
   static async getInitialProps (ctx) {
-    const sheet = new ServerStyleSheet()
-    const sheets = new ServerStyleSheets()
+    const styledComponentsSheet = new ServerStyleSheet()
+    const materialSheets = new ServerStyleSheets()
     const originalRenderPage = ctx.renderPage;
 
     try {
         ctx.renderPage = () => originalRenderPage({
-            enhanceApp: App => props => ({...sheet.collectStyles(<App {...props} />), ...sheets.collect(<App {...props} />)})
+            enhanceApp: App => props => materialSheets.collect(<App {...props} />)
           })
         const initialProps = await Document.getInitialProps(ctx)
+
+        ctx.renderPage = () => originalRenderPage({
+            enhanceApp: App => props => styledComponentsSheet.collectStyles(<App {...props} />)
+          })
+        const initialPropsSec = await Document.getInitialProps(ctx)
         return {
           ...initialProps,
+          ...initialPropsSec,
           styles: (
             <React.Fragment>
-              {sheets.getStyleElement()}
-              {sheet.getStyleElement()}
-              {flush() || null}
+              {materialSheets.getStyleElement()}
+              {styledComponentsSheet.getStyleElement()}
             </React.Fragment>
           )
         }
       } finally {
-        sheet.seal()
+        styledComponentsSheet.seal()
       }
   }
 
