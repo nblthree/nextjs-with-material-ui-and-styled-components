@@ -3,12 +3,10 @@
   "version": "1.0.0",
   "dependencies": {
     "@material-ui/core": "latest",
-    "jss": "latest",
     "next": "latest",
     "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-jss": "^8.1.0",
     "styled-components": "latest"
   },
   "devDependencies": {
