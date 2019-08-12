@@ -12,19 +12,14 @@ class MyDocument extends Document {
 
     try {
         ctx.renderPage = () => originalRenderPage({
-            enhanceApp: App => props => materialSheets.collect(<App {...props} />)
+            enhanceApp: App => props => styledComponentsSheet.collectStyles(materialSheets.collect(<App {...props} />))
           })
         const initialProps = await Document.getInitialProps(ctx)
-
-        ctx.renderPage = () => originalRenderPage({
-            enhanceApp: App => props => styledComponentsSheet.collectStyles(<App {...props} />)
-          })
-        const initialPropsSec = await Document.getInitialProps(ctx)
         return {
           ...initialProps,
-          ...initialPropsSec,
           styles: (
             <React.Fragment>
+              {initialProps.styles}
               {materialSheets.getStyleElement()}
               {styledComponentsSheet.getStyleElement()}
             </React.Fragment>
